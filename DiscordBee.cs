@@ -351,15 +351,16 @@ namespace MusicBeePlugin
 
       _discordPresence.State = padString(_layoutHandler.Render(_settings.PresenceState, metaDataDict, _settings.Separator));
 
-      var t = DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1));
+      long t = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
       if (_settings.ShowTime && playerGetPlayState == PlayState.Playing)
       {
-        var totalRemainingDuration = _mbApiInterface.NowPlaying_GetDuration() - _mbApiInterface.Player_GetPosition();
+        int playerPosition = _mbApiInterface.Player_GetPosition();
+        int duration = _mbApiInterface.NowPlaying_GetDuration();
         _discordPresence.Timestamps = new Timestamps
         {
-          StartUnixMilliseconds = (ulong)(Math.Round(t.TotalSeconds) - Math.Round(_mbApiInterface.Player_GetPosition() / 1000.0)),
-          EndUnixMilliseconds = (ulong)(Math.Round(t.TotalSeconds) + Math.Round(totalRemainingDuration / 1000.0))
+          StartUnixMilliseconds = (ulong)(t - playerPosition),
+          EndUnixMilliseconds = (ulong)(t + duration - playerPosition)
         };
       }
 
