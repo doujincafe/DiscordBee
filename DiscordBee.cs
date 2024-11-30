@@ -191,6 +191,7 @@ namespace MusicBeePlugin
       switch (type)
       {
         case NotificationType.PluginStartup:
+        case NotificationType.NowPlayingArtworkReady:
           var playState = _mbApiInterface.Player_GetPlayState();
           // assuming MusicBee wasn't closed and started again in the same Discord session
           if (_settings.UpdatePresenceWhenStopped || (playState != PlayState.Paused && playState != PlayState.Stopped))
@@ -371,7 +372,7 @@ namespace MusicBeePlugin
           _discordPresence.Timestamps.EndUnixMilliseconds = null;
         }
       }
-
+      
       switch (playerGetPlayState)
       {
         case PlayState.Playing:
