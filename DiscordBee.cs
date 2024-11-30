@@ -357,11 +357,19 @@ namespace MusicBeePlugin
       {
         int playerPosition = _mbApiInterface.Player_GetPosition();
         int duration = _mbApiInterface.NowPlaying_GetDuration();
+
         _discordPresence.Timestamps = new Timestamps
         {
           StartUnixMilliseconds = (ulong)(t - playerPosition),
           EndUnixMilliseconds = (ulong)(t + duration - playerPosition)
         };
+
+        // Listening to radio will have its duration set to -1. In this case, don't use
+        // the progress.
+        if (duration == -1)
+        {
+          _discordPresence.Timestamps.EndUnixMilliseconds = null;
+        }
       }
 
       switch (playerGetPlayState)
