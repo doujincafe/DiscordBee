@@ -34,8 +34,10 @@ namespace MusicBeePlugin.ImgurClient
     public async Task<ImgurAlbum> CreateAlbum()
     {
       var request = new RestRequest("album");
-      request.AddParameter("title", "DiscordBee");
-      request.Method = Method.Post;
+      request.AddJsonBody<ImgurCreateAlbumRequest>(new ImgurCreateAlbumRequest()
+      {
+        Title = "DiscordBee"
+      });
       try
       {
         var response = await _client.PostAsync<ImgurResponse<ImgurAlbum>>(request);
