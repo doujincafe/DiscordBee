@@ -28,7 +28,7 @@ namespace MusicBeePlugin
       {"ButtonUrl2", "https://www.last.fm/music/[Artist]/_/[TrackTitle]"},
       {"DiscordAppId", "409394531948298250"}, // prod
       //{"DiscordAppId", "408977077799354379"}, // dev
-      {"ImgurClientId", "09bef4c058080cd"},
+      {"ImgurClientId", "6d207e02198a847aa98d0a2a901485a5"}, // Didn't rename because I'm lazy :)
     };
 
     public event EventHandler<SettingChangedEventArgs> SettingChanged;

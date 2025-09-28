@@ -1,10 +1,10 @@
 namespace MusicBeePlugin
 {
   using DiscordRPC;
-  using MusicBeePlugin.DiscordTools;
-  using MusicBeePlugin.DiscordTools.Assets;
-  using MusicBeePlugin.DiscordTools.Assets.Uploader;
-  using MusicBeePlugin.UI;
+  using DiscordTools;
+  using DiscordTools.Assets;
+  using DiscordTools.Assets.Uploader;
+  using UI;
   using System;
   using System.Collections.Generic;
   using System.Diagnostics;
@@ -70,7 +70,7 @@ namespace MusicBeePlugin
       _about.TargetApplication = "";   // current only applies to artwork, lyrics or instant messenger name that appears in the provider drop down selector or target Instant Messenger
       _about.Type = PluginType.General;
       _about.VersionMajor = 3;  // your plugin version
-      _about.VersionMinor = 1;
+      _about.VersionMinor = 2;
       _about.Revision = 0;
       _about.MinInterfaceVersion = MinInterfaceVersion;
       _about.MinApiRevision = MinApiRevision;
@@ -80,7 +80,7 @@ namespace MusicBeePlugin
       var workingDir = _mbApiInterface.Setting_GetPersistentStoragePath() + _about.Name;
       var settingsFilePath = $"{workingDir}\\{_about.Name}.settings";
       _imgurAssetCachePath = $"{workingDir}\\{_about.Name}-Imgur.cache";
-      _imgurAlbum = $"{workingDir}\\{_about.Name}-Imgur.album";
+      _imgurAlbum = $"{workingDir}\\{_about.Name}-FreeImageHost.album";
 
       _settings = Settings.GetInstance(settingsFilePath);
       _settings.SettingChanged += SettingChangedCallback;

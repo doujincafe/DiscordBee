@@ -193,7 +193,7 @@ namespace MusicBeePlugin.UI
             // 
             this.checkBoxTextOnly.AutoSize = true;
             this.checkBoxTextOnly.ForeColor = System.Drawing.Color.Black;
-            this.checkBoxTextOnly.Location = new System.Drawing.Point(266, 60);
+            this.checkBoxTextOnly.Location = new System.Drawing.Point(266, 145);
             this.checkBoxTextOnly.Margin = new System.Windows.Forms.Padding(4);
             this.checkBoxTextOnly.Name = "checkBoxTextOnly";
             this.checkBoxTextOnly.Padding = new System.Windows.Forms.Padding(2);
@@ -206,7 +206,7 @@ namespace MusicBeePlugin.UI
             // 
             this.checkBoxPresenceUpdate.AutoSize = true;
             this.checkBoxPresenceUpdate.ForeColor = System.Drawing.Color.Black;
-            this.checkBoxPresenceUpdate.Location = new System.Drawing.Point(266, 6);
+            this.checkBoxPresenceUpdate.Location = new System.Drawing.Point(266, 95);
             this.checkBoxPresenceUpdate.Margin = new System.Windows.Forms.Padding(4);
             this.checkBoxPresenceUpdate.Name = "checkBoxPresenceUpdate";
             this.checkBoxPresenceUpdate.Padding = new System.Windows.Forms.Padding(2);
@@ -218,9 +218,9 @@ namespace MusicBeePlugin.UI
             // textBoxSeparator
             // 
             this.textBoxSeparator.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxSeparator.Location = new System.Drawing.Point(87, 3);
+            this.textBoxSeparator.Location = new System.Drawing.Point(153, 3);
             this.textBoxSeparator.Name = "textBoxSeparator";
-            this.textBoxSeparator.Size = new System.Drawing.Size(87, 25);
+            this.textBoxSeparator.Size = new System.Drawing.Size(337, 25);
             this.textBoxSeparator.TabIndex = 4;
             // 
             // label5
@@ -310,16 +310,16 @@ namespace MusicBeePlugin.UI
             this.labelImgurClientId.ForeColor = System.Drawing.Color.Black;
             this.labelImgurClientId.Location = new System.Drawing.Point(14, 65);
             this.labelImgurClientId.Name = "labelImgurClientId";
-            this.labelImgurClientId.Size = new System.Drawing.Size(88, 15);
+            this.labelImgurClientId.Size = new System.Drawing.Size(136, 15);
             this.labelImgurClientId.TabIndex = 19;
-            this.labelImgurClientId.Text = "Imgur Client ID";
+            this.labelImgurClientId.Text = "FreeImageHost API Key";
             // 
             // textBoxImgurClientId
             // 
             this.textBoxImgurClientId.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxImgurClientId.Location = new System.Drawing.Point(108, 62);
+            this.textBoxImgurClientId.Location = new System.Drawing.Point(153, 61);
             this.textBoxImgurClientId.Name = "textBoxImgurClientId";
-            this.textBoxImgurClientId.Size = new System.Drawing.Size(151, 25);
+            this.textBoxImgurClientId.Size = new System.Drawing.Size(337, 25);
             this.textBoxImgurClientId.TabIndex = 20;
             this.textBoxImgurClientId.TextChanged += new System.EventHandler(this.textBoxImgurClientId_TextChanged);
             // 
@@ -359,7 +359,7 @@ namespace MusicBeePlugin.UI
             this.checkBoxShowTime.Checked = true;
             this.checkBoxShowTime.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxShowTime.ForeColor = System.Drawing.Color.Black;
-            this.checkBoxShowTime.Location = new System.Drawing.Point(266, 34);
+            this.checkBoxShowTime.Location = new System.Drawing.Point(266, 119);
             this.checkBoxShowTime.Margin = new System.Windows.Forms.Padding(4);
             this.checkBoxShowTime.Name = "checkBoxShowTime";
             this.checkBoxShowTime.Padding = new System.Windows.Forms.Padding(2);
@@ -373,7 +373,7 @@ namespace MusicBeePlugin.UI
             this.checkBoxArtworkUpload.AutoSize = true;
             this.checkBoxArtworkUpload.BackColor = System.Drawing.Color.Transparent;
             this.checkBoxArtworkUpload.ForeColor = System.Drawing.Color.Black;
-            this.checkBoxArtworkUpload.Location = new System.Drawing.Point(17, 91);
+            this.checkBoxArtworkUpload.Location = new System.Drawing.Point(20, 94);
             this.checkBoxArtworkUpload.Margin = new System.Windows.Forms.Padding(4);
             this.checkBoxArtworkUpload.Name = "checkBoxArtworkUpload";
             this.checkBoxArtworkUpload.Padding = new System.Windows.Forms.Padding(2);
@@ -397,9 +397,9 @@ namespace MusicBeePlugin.UI
             // textBoxDiscordAppId
             // 
             this.textBoxDiscordAppId.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxDiscordAppId.Location = new System.Drawing.Point(108, 32);
+            this.textBoxDiscordAppId.Location = new System.Drawing.Point(153, 31);
             this.textBoxDiscordAppId.Name = "textBoxDiscordAppId";
-            this.textBoxDiscordAppId.Size = new System.Drawing.Size(151, 25);
+            this.textBoxDiscordAppId.Size = new System.Drawing.Size(337, 25);
             this.textBoxDiscordAppId.TabIndex = 9;
             this.textBoxDiscordAppId.TextChanged += new System.EventHandler(this.textBoxDiscordAppId_TextChanged);
             // 

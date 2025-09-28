@@ -1,3 +1,0 @@
-[submodule "3rdparty/discord-rpc-sharp"]
-	path = 3rdparty/discord-rpc-sharp
-	url = https://github.com/Lachee/discord-rpc-csharp.git

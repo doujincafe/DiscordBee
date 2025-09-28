@@ -1,6 +1,6 @@
 namespace MusicBeePlugin.ImgurClient
 {
-  using MusicBeePlugin.ImgurClient.Types;
+  using Types;
   using RestSharp;
   using RestSharp.Serializers.NewtonsoftJson;
   using System;
@@ -8,9 +8,9 @@ namespace MusicBeePlugin.ImgurClient
 
   public class ImgurClient : IDisposable
   {
-    public const string ImgurApiUrl = "https://api.imgur.com/3";
+    public const string ImgurApiUrl = "https://freeimage.host/api/1/";
     private readonly RestClient _client;
-    private RateLimitHandler _rateLimitHandler;
+    private readonly string _clientKey;
 
     public ImgurClient(string clientId)
     {
@@ -18,77 +18,27 @@ namespace MusicBeePlugin.ImgurClient
       {
         ThrowOnAnyError = true,
         FollowRedirects = true,
-        PreAuthenticate = true,
-        Timeout = TimeSpan.FromSeconds(20),
-        //Proxy = new WebProxy("http://localhost:8080"),
-        ConfigureMessageHandler = orig =>
-        {
-          _rateLimitHandler = new RateLimitHandler(orig);
-          return _rateLimitHandler;
-        },
-        Authenticator = new ImgurAuthenticator(clientId)
       };
+
+      _clientKey = clientId;
       _client = new RestClient(options, configureSerialization: s => s.UseNewtonsoftJson());
     }
 
-    public async Task<ImgurAlbum> CreateAlbum()
+    public async Task<FreeImageHostUploadResult> UploadImage(string title, string dataB64)
     {
-      var request = new RestRequest("album");
-      request.AddJsonBody<ImgurCreateAlbumRequest>(new ImgurCreateAlbumRequest()
-      {
-        Title = "DiscordBee"
-      });
-      try
-      {
-        var response = await _client.PostAsync<ImgurResponse<ImgurAlbum>>(request);
-        return GetResponseData(response);
-      }
-      catch
-      {
-        return null;
-      }
-    }
+      var request = new RestRequest("upload", Method.Post);
 
-    public async Task<ImgurImage> UploadImage(string title, string dataB64, string albumHash = null)
-    {
-      var request = new RestRequest("upload");
-
-      request.AddParameter("image", dataB64);
-      if (!string.IsNullOrEmpty(albumHash))
-      {
-        request.AddParameter("album", albumHash);
-      }
-      request.AddParameter("type", "base64");
-      request.AddParameter("title", title);
-      request.AddParameter("name", "cover.png");
-      var response = await _client.PostAsync<ImgurResponse<ImgurImage>>(request);
-      return GetResponseData(response);
-    }
-
-    public async Task<ImgurAlbum> GetAlbum(string albumHash)
-    {
-      var response = await _client.GetAsync<ImgurResponse<ImgurAlbum>>("album/{albumHash}", new { albumHash });
-      return GetResponseData(response);
-    }
-
-    public async Task<ImgurImage[]> GetAlbumImages(string albumHash)
-    {
-      var response = await _client.GetAsync<ImgurResponse<ImgurImage[]>>("album/{albumHash}/images", new { albumHash });
-      return GetResponseData(response);
-    }
-
-    private static T GetResponseData<T>(ImgurResponse<T> response)
-    {
-      if (response != null)
-      {
-        return response.Data;
-      }
-      return default;
+      request.AddParameter("action", "upload");
+      request.AddParameter("key", _clientKey);
+      request.AddParameter("source", dataB64);
+      request.AddParameter("format", "json");
+      var response = await _client.PostAsync<FreeImageHostUploadResult>(request);
+      return response;
     }
 
     public (bool status, string info) IsRateLimited()
     {
-      return (_rateLimitHandler?.IsRateLimited == true, _rateLimitHandler?.RateLimitInfo);
+      return (false, string.Empty);
     }
 
     public void Dispose()

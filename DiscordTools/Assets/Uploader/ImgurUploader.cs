@@ -1,123 +1,78 @@
 namespace MusicBeePlugin.DiscordTools.Assets.Uploader
 {
-  using MusicBeePlugin.ImgurClient.Types;
-  using Newtonsoft.Json;
   using System;
   using System.Collections.Generic;
   using System.Diagnostics;
   using System.IO;
+  using System.Text;
   using System.Threading;
   using System.Threading.Tasks;
+  using Newtonsoft.Json;
 
   public class ImgurUploader : IAssetUploader
   {
     private readonly ImgurClient.ImgurClient _client;
     private readonly string _albumSavePath;
-    private ImgurAlbum _album;
+
+    private readonly Dictionary<string, string> _album;
     private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
     public ImgurUploader(string albumSavePath, string imgurClientId)
     {
-      _albumSavePath = albumSavePath ?? throw new ArgumentNullException(nameof(albumSavePath));
+      // Album save path cannot be null or empty
+      if (string.IsNullOrEmpty(albumSavePath))
+      {
+        throw new ArgumentNullException(nameof(albumSavePath));
+      }
+
       _client = new ImgurClient.ImgurClient(imgurClientId);
+
+      // Load album
+      _albumSavePath = albumSavePath;
+      _album = new Dictionary<string, string>();
+      if (File.Exists(_albumSavePath))
+      {
+        try
+        {
+          var file = File.ReadAllText(_albumSavePath);
+          _album = JsonConvert.DeserializeObject<Dictionary<string, string>>(file);
+        }
+        catch (Exception)
+        {
+          // Ignore errors
+          _album = new Dictionary<string, string>();
+        }
+      }
     }
 
     public Task<bool> DeleteAsset(AlbumCoverData assetData)
     {
-      throw new System.NotImplementedException();
+      throw new NotImplementedException();
     }
 
     public void Dispose()
     {
       _client.Dispose();
-      if (!File.Exists(_albumSavePath) && _album != null)
+
+      try
       {
-        File.WriteAllText(_albumSavePath, JsonConvert.SerializeObject(_album));
+        var serialized = JsonConvert.SerializeObject(_album);
+        File.WriteAllText(_albumSavePath, serialized, Encoding.UTF8);
+      } catch (Exception)
+      {
+        // Ignore errors
+        Debug.Write("Unable to write cache due to an exception!");
       }
     }
 
     public async Task<Dictionary<string, string>> GetAssets()
     {
-      var ret = new Dictionary<string, string>();
-      if (_album == null)
-      {
-        return ret;
-      }
-      var images = await _client.GetAlbumImages(_album.Id);
-
-      foreach (var image in images)
-      {
-        ret[image.Title] = image.Link;
-      }
-
-      return ret;
+      return await Task.FromResult(_album);
     }
 
     public async Task<bool> Init()
     {
-      Debug.WriteLine(" ---> Waiting for semaphore");
-      await _semaphore.WaitAsync();
-      Debug.WriteLine(" <--- Waiting for semaphore");
-      try
-      {
-        if (_album != null)
-        {
-          return true;
-        }
-        Debug.WriteLine(" ---> Creating Album");
-        await GetAlbum();
-        Debug.WriteLine(" <--- Creating Album");
-      }
-      finally
-      {
-        Debug.WriteLine(" ---> Releasing semaphore");
-        _semaphore.Release();
-      }
-      return _album != null;
-    }
-
-    private async Task GetAlbum()
-    {
-      ImgurAlbum tmpAlbum = null;
-
-      if (File.Exists(_albumSavePath))
-      {
-        tmpAlbum = JsonConvert.DeserializeObject<ImgurAlbum>(File.ReadAllText(_albumSavePath));
-        if (string.IsNullOrEmpty(tmpAlbum.DeleteHash))
-        {
-          File.Delete(_albumSavePath);
-          tmpAlbum = null;
-        }
-        else
-        {
-          try
-          {
-            _ = await _client.GetAlbum(tmpAlbum.Id);
-          }
-          catch
-          {
-            Debug.WriteLine($"Album does not exist: {tmpAlbum} with id: {tmpAlbum.Id} -> creating new one");
-            File.Delete(_albumSavePath);
-            tmpAlbum = null;
-          }
-        }
-      }
-      else if (Path.GetDirectoryName(_albumSavePath) != null && !Directory.Exists(Path.GetDirectoryName(_albumSavePath)))
-      {
-        Directory.CreateDirectory(Path.GetDirectoryName(_albumSavePath) ?? throw new InvalidOperationException());
-      }
-
-      if (tmpAlbum == null)
-      {
-        tmpAlbum = await _client.CreateAlbum();
-        Debug.WriteLine($"Created album: {tmpAlbum} with deleteHash: {tmpAlbum.DeleteHash}");
-      }
-
-      if (tmpAlbum != null)
-      {
-        _album = tmpAlbum;
-        File.WriteAllText(_albumSavePath, JsonConvert.SerializeObject(_album));
-      }
+      return await Task.FromResult(true);
     }
 
     public bool IsAssetCached(AlbumCoverData assetData)
@@ -138,12 +93,18 @@ namespace MusicBeePlugin.DiscordTools.Assets.Uploader
 
     public async Task<UploadResult> UploadAsset(AlbumCoverData assetData)
     {
-      if (_album == null)
+      if (_album.TryGetValue(assetData.Hash, out var value))
       {
-        return new UploadResult { Hash = assetData.Hash, Link = null };
+        return new UploadResult { Hash = assetData.Hash, Link = value };
       }
-      var uploaded = await _client.UploadImage(assetData.Hash, assetData.ImageB64, _album.DeleteHash);
-      return new UploadResult { Hash = assetData.Hash, Link = uploaded.Link };
+
+      var uploaded = await _client.UploadImage(assetData.Hash, assetData.ImageB64);
+      if (uploaded.StatusCode == 200 && !string.IsNullOrEmpty(uploaded.ImageInfo.Url))
+      {
+        _album.Add(assetData.Hash, uploaded.ImageInfo.Url);
+      }
+
+      return new UploadResult { Hash = assetData.Hash, Link = uploaded.ImageInfo.Url };
     }
   }
 }

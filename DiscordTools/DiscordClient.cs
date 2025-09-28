@@ -262,7 +262,7 @@ namespace MusicBeePlugin.DiscordTools
     private void ErrorCallback(object sender, ErrorMessage e)
     {
       Debug.Fail($"DiscordRpc: ERROR ({e.Code})", e.Message);
-      if (e.Code == ErrorCode.PipeException || e.Code == ErrorCode.UnkownError)
+      if (e.Code == ErrorCode.PipeException || e.Code == ErrorCode.UnknownError)
       {
         IsConnected = false;
       }

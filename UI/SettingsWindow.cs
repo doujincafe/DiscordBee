@@ -2,6 +2,7 @@ namespace MusicBeePlugin.UI
 {
   using System;
   using System.Drawing;
+  using System.Text.RegularExpressions;
   using System.Windows.Forms;
 
   public partial class SettingsWindow : Form
@@ -57,8 +58,8 @@ namespace MusicBeePlugin.UI
       textBoxLargeImage.Text = settings.LargeImageText;
       textBoxSmallImage.Text = settings.SmallImageText;
       textBoxSeparator.Text = settings.Separator;
-      textBoxDiscordAppId.Text = settings.DiscordAppId.Equals(Settings.defaults["DiscordAppId"]) ? "" : settings.DiscordAppId;
-      textBoxImgurClientId.Text = settings.ImgurClientId.Equals(Settings.defaults["ImgurClientId"]) ? "" : settings.ImgurClientId;
+      textBoxDiscordAppId.Text = settings.DiscordAppId;
+      textBoxImgurClientId.Text = settings.ImgurClientId;
       checkBoxPresenceUpdate.Checked = settings.UpdatePresenceWhenStopped;
       checkBoxShowTime.Checked = settings.ShowTime;
       checkBoxTextOnly.Checked = settings.TextOnly;
@@ -144,15 +145,15 @@ namespace MusicBeePlugin.UI
 
       bool validateDiscordId()
       {
-        if (textBoxDiscordAppId.Text.Length < 18 || textBoxDiscordAppId.Text.Length > 19
-          || textBoxDiscordAppId.Text.Equals(Settings.defaults["DiscordAppId"])
-          || !ContainsDigitsOnly(textBoxDiscordAppId.Text))
+        var exp = new Regex(@"^[0-9]{18,}$", RegexOptions.None);
+        if (exp.IsMatch(textBoxDiscordAppId.Text))
         {
-          textBoxDiscordAppId.BackColor = Color.PaleVioletRed;
-          return false;
+          textBoxDiscordAppId.BackColor = Color.White;
+          return true;
         }
-        textBoxDiscordAppId.BackColor = Color.White;
-        return true;
+
+        textBoxDiscordAppId.BackColor = Color.Red;
+        return false;
       }
 
       if (textBoxDiscordAppId.Text.Length > 0 && !validateDiscordId())
@@ -162,14 +163,15 @@ namespace MusicBeePlugin.UI
 
       bool validateImgurClientId()
       {
-        if (textBoxImgurClientId.Text.Length != Settings.defaults["ImgurClientId"].Length
-          || textBoxImgurClientId.Text.Equals(Settings.defaults["ImgurClientId"]))
+        var exp = new Regex(@"^[a-f0-9]{32}$", RegexOptions.IgnoreCase);
+        if (exp.IsMatch(textBoxImgurClientId.Text ?? "") && textBoxImgurClientId.Text.Length == 32)
         {
-          textBoxImgurClientId.BackColor = Color.PaleVioletRed;
-          return false;
+          textBoxImgurClientId.BackColor = Color.White;
+          return true;
         }
-        textBoxImgurClientId.BackColor = Color.White;
-        return true;
+
+        textBoxImgurClientId.BackColor = Color.Red;
+        return false;
       }
 
       if (checkBoxArtworkUpload.Checked && textBoxImgurClientId.Text.Length > 0 && !validateImgurClientId())
